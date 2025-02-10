@@ -40,7 +40,7 @@ public class Schedule extends Base{
         this.todo = todo;
     }
 
-    public void serUser(User user){
+    public void setUser(User user){
         this.user = user;
     }
 }
