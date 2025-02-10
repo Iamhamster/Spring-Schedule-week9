@@ -22,9 +22,9 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto save(ScheduleRequestDto dto){
-        Schedule schedule = scheduleRepository.save(new Schedule(dto.getName(), dto.getTodo(), LocalDateTime.now(), LocalDateTime.now()));
+        Schedule schedule = scheduleRepository.save(new Schedule(dto.getName(), dto.getTodoTitle(), dto.getTodo(), LocalDateTime.now(), LocalDateTime.now()));
 
-        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
+        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
     }
 
     public List<ScheduleResponseDto> findAll(){
@@ -32,7 +32,7 @@ public class ScheduleService {
 
         List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
         for(Schedule schedule:schedules){
-            scheduleResponseDtos.add(new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime()));
+            scheduleResponseDtos.add(new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime()));
         }
 
         return scheduleResponseDtos;
@@ -42,7 +42,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 id에 맞는 스케줄이 없습니다.")
         );
-        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
+        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
     }
 
     @Transactional
@@ -50,8 +50,8 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("헤당 id에 맞는 스케줄이 없습니다.")
         );
-        schedule.update(dto.getName(), dto.getTodo(), LocalDateTime.now());
-        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
+        schedule.update(dto.getName(), dto.getTodoTitle(), dto.getTodo(), LocalDateTime.now());
+        return new ScheduleResponseDto(schedule.getId(), schedule.getName(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
     }
 
     @Transactional

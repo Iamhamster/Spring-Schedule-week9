@@ -17,6 +17,8 @@ public class Schedule {
 
     private String name;
 
+    private String todoTitle;
+
     private String todo;
 
     @CreatedDate
@@ -26,15 +28,17 @@ public class Schedule {
     @LastModifiedDate
     private LocalDateTime updateTime;
 
-    public Schedule(String name, String todo, LocalDateTime createTime, LocalDateTime updateTime){
+    public Schedule(String name, String todoTitle, String todo, LocalDateTime createTime, LocalDateTime updateTime){
         this.name = name;
+        this.todoTitle = todoTitle;
         this.todo = todo;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
 
-    public void update(String name, String todo, LocalDateTime updateTime){
+    public void update(String name, String todoTitle, String todo, LocalDateTime updateTime){
         this.name = name;
+        this.todoTitle = todoTitle;
         this.todo = todo;
         this.updateTime = updateTime;
     }
