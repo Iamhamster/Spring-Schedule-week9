@@ -5,41 +5,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor
-public class Schedule {
+public class Schedule extends Base{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String nameWrite;
 
+    @Column(nullable = false)
     private String todoTitle;
 
+    @Column(columnDefinition = "logtext")
     private String todo;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createTime;
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 
-    @LastModifiedDate
-    private LocalDateTime updateTime;
-
-    public Schedule(String name, String todoTitle, String todo, LocalDateTime createTime, LocalDateTime updateTime){
-        this.name = name;
+    public Schedule(String nameWrite, String todoTitle, String todo){
+        this.nameWrite = nameWrite;
         this.todoTitle = todoTitle;
         this.todo = todo;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
     }
 
-    public void update(String name, String todoTitle, String todo, LocalDateTime updateTime){
-        this.name = name;
+    public void update(String nameWrite, String todoTitle, String todo){
+        this.nameWrite = nameWrite;
         this.todoTitle = todoTitle;
         this.todo = todo;
-        this.updateTime = updateTime;
+    }
+
+    public void serUser(User user){
+        this.user = user;
     }
 }
