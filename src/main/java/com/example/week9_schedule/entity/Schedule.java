@@ -16,13 +16,14 @@ public class Schedule extends Base{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nameWrite;
+    @Column
+    private String nameWrite; //작성자명
 
     @Column(nullable = false)
-    private String todoTitle;
+    private String todoTitle; // 일정 제목
 
     @Column(columnDefinition = "logtext")
-    private String todo;
+    private String todo; // 일정 내용
 
     @ManyToOne
     @JoinColumn(name="user_id")

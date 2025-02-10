@@ -25,10 +25,9 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto save(ScheduleRequestDto dto){
-        User findUser = userRepository.findUserByNameOrElseThrow(dto.getNameWrite());
-        Schedule schedule = scheduleRepository.save(new Schedule(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo()));
-        schedule.setUser(findUser);
-        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo());
+        Schedule schedule = new Schedule(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo());
+        scheduleRepository.save(schedule);
+        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
     }
 
     public List<ScheduleResponseDto> findAll(){
@@ -39,13 +38,15 @@ public class ScheduleService {
             scheduleResponseDtos.add(new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo()));
         }
         return scheduleResponseDtos;*/
-        return scheduleRepository.findAll().stream().map(ScheduleResponseDto::toDto).toList();
+        return scheduleRepository.findAll()
+                .stream()
+                .map(ScheduleResponseDto::toDto)
+                .toList();
     }
 
     public ScheduleResponseDto findOne(Long id){
         Schedule findSchedule = scheduleRepository.findByIdOrElseThrow(id);
-        User writer = findSchedule.getUser();
-        return new ScheduleResponseDto(writer.getName(), findSchedule.getTodoTitle(), findSchedule.getTodo());
+        return new ScheduleResponseDto(findSchedule.getId(), findSchedule.getNameWrite(), findSchedule.getTodoTitle(), findSchedule.getTodo(), findSchedule.getCreateTime(), findSchedule.getUpdateTime());
         /*Schedule schedule = scheduleRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 id에 맞는 스케줄이 없습니다.")
         );
@@ -58,7 +59,7 @@ public class ScheduleService {
                 () -> new IllegalArgumentException("헤당 id에 맞는 스케줄이 없습니다.")
         );
         schedule.update(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo());
-        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo());
+        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
     }
 
     @Transactional
