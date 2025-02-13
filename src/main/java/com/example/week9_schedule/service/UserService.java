@@ -25,6 +25,17 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
+    public LoginResponseDto login(String email, String pw) {
+        User byEmail = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ExceptionStatus.USER_IS_NOT_EXIST)
+        );
+
+        if(!byEmail.getPw().equals(pw)){
+            throw new CustomException(ExceptionStatus.PASSWORD_WRONG);
+        }
+        return new LoginResponseDto(byEmail.getName(), byEmail.getEmail());
+    }
+
     @Transactional
     public UserResponseDto signUp(UserRequestDto dto){    //save >> signUp 변경
         User user = userRepository.save(new User(dto.getName(), dto.getEmail(), dto.getPw()));  //회원가입: 사용자가 이름, 이메일, 비밀번호를 입력해서 회원가입
@@ -86,14 +97,4 @@ public class UserService {
         userRepository.deleteById(id);  //id값이 같은 유저를 삭제
     }
 
-    public LoginResponseDto login(String email, String pw) {
-        User byEmail = userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ExceptionStatus.USER_IS_NOT_EXIST)
-        );
-
-        if(!byEmail.getPw().equals(pw)){
-            throw new CustomException(ExceptionStatus.PASSWORD_WRONG);
-        }
-        return new LoginResponseDto(byEmail.getName(), byEmail.getEmail());
-    }
 }

@@ -55,7 +55,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto update(Long id, ScheduleRequestDto dto){
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new CustomException(ExceptionStatus.)
+                () -> new CustomException(ExceptionStatus.POST_IS_EMPTY)
         );
         schedule.update(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo());
         return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
