@@ -1,11 +1,10 @@
 package com.example.week9_schedule.service;
 
-import com.example.week9_schedule.dto.ScheduleRequestDto;
-import com.example.week9_schedule.dto.ScheduleResponseDto;
-import com.example.week9_schedule.dto.UserRequestDto;
-import com.example.week9_schedule.dto.UserResponseDto;
+import com.example.week9_schedule.dto.*;
 import com.example.week9_schedule.entity.Schedule;
 import com.example.week9_schedule.entity.User;
+import com.example.week9_schedule.exception.CustomException;
+import com.example.week9_schedule.exception.ExceptionStatus;
 import com.example.week9_schedule.repository.ScheduleRepository;
 import com.example.week9_schedule.repository.UserRepository;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +37,7 @@ public class UserService {
         List<User> users = userRepository.findAll();    //모든 유저 확인: Repository에서 모든 유저에 대한 값을 불러와서 users변수에 넣어줌
 
         List<UserResponseDto> UserResponseDtos = new ArrayList<>();     //users는 리스트라서 바로 못 보여줌. UserResponseDto형식으로 변환할 수 있도록 새로 리스트 하나를 만들음
-        for(User user:users){//모든 유저 확인: 유저 한명씩 불러와서 add로 한 리스트로 만들어줌
+        for(User user:users){ //모든 유저 확인: 유저 한명씩 불러와서 add로 한 리스트로 만들어줌
             UserResponseDtos.add(new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getCreateTime(), user.getUpdateTime()));
         }
 
@@ -50,7 +48,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(id);  //한 유저 확인: id값으로 Repository에서 찾아서 한 유저의 값만 넣어줌.
 
         if(optionalUser.isEmpty()){ //찾고 있는 유저가 회원가입을 안해서 없는 유저인 경우, 에러가남.
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does nor exists id : "+id);
+            throw new CustomException(ExceptionStatus.USER_IS_NOT_EXIST);
         }
 
         User findUser = optionalUser.get(); //id를 기준으로 찾은 값들을 User형으로 바꿔서 넣어줌. 사용하기 쉽게
@@ -66,12 +64,12 @@ public class UserService {
     public UserResponseDto updatePW(Long id, UserRequestDto dto){   //update >> updatePW 변경
         User findUser = userRepository.findByIdOrElseThrow(id); //id값으로 pw를 변경하고자 하는 유저를 찾음.
 
-        if(!findUser.getPw().equals(dto.getPw())){  //현재의 패스워드를 사용자가 알고 있는지 물어봄.
+        /*if(!findUser.getPw().equals(dto.getPw())){  //현재의 패스워드를 사용자가 알고 있는지 물어봄.
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."); //현재의 패스워드를 사용자가 모르면 에러가남.(현재의 패스워드와 사용자가 알고 있는 패스워드와 다르면 에러)
-        }
+        }*/
 
         //return findUser.updatePW(dto.getNewPW());
-        findUser.updatePW(dto.getPw()); //새 패스워드를 입력받음.
+        findUser.updatePW(dto.getName(), dto.getEmail(), dto.getPw()); //새 패스워드를 입력받음.
         return new UserResponseDto(findUser.getId(), findUser.getName(), findUser.getEmail(), findUser.getCreateTime(), findUser.getUpdateTime()); //변경한 유저의 정보를 보여줌.(id, 이름, 이메일, 생성, 업데이트)
         /*User user = userRepository.findById(id).orElseThrow(      //UserResponseDto
                 () -> new IllegalArgumentException("헤당 id에 맞는 스케줄이 없습니다.")
@@ -83,8 +81,19 @@ public class UserService {
     @Transactional
     public void delete(Long id){
         if(!userRepository.existsById(id)){ //id값으로 Repository에서 삭제하고자 하는 유저를 찾음.
-            throw new IllegalArgumentException("없는 id입니다.");    //삭제하고자 하는 유저가 없는 경우, 에러가남.
+            throw new CustomException(ExceptionStatus.ID_DOESNOT_EXIST);    //삭제하고자 하는 유저가 없는 경우, 에러가남.
         }
         userRepository.deleteById(id);  //id값이 같은 유저를 삭제
+    }
+
+    public LoginResponseDto login(String email, String pw) {
+        User byEmail = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ExceptionStatus.USER_IS_NOT_EXIST)
+        );
+
+        if(!byEmail.getPw().equals(pw)){
+            throw new CustomException(ExceptionStatus.PASSWORD_WRONG);
+        }
+        return new LoginResponseDto(byEmail.getName(), byEmail.getEmail());
     }
 }

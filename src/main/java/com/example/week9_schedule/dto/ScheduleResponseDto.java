@@ -2,7 +2,6 @@ package com.example.week9_schedule.dto;
 
 import com.example.week9_schedule.entity.Schedule;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

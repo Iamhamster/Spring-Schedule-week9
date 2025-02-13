@@ -3,15 +3,12 @@ package com.example.week9_schedule.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Table(name = "schedules")
 @NoArgsConstructor
+
 public class Schedule extends Base{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +19,7 @@ public class Schedule extends Base{
     @Column(nullable = false)
     private String todoTitle; // 일정 제목
 
-    @Column(columnDefinition = "logtext")
+    @Column(columnDefinition = "longtext")
     private String todo; // 일정 내용
 
     @ManyToOne
@@ -41,7 +38,4 @@ public class Schedule extends Base{
         this.todo = todo;
     }
 
-    public void setUser(User user){
-        this.user = user;
-    }
 }

@@ -4,10 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
+@Table(name = "user")
 @NoArgsConstructor
 public class User extends Base{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,13 +26,11 @@ public class User extends Base{
         this.pw = pw;
     }
 
-    public void update(String name, String email, String pw){
+    public void updatePW(String name, String email, String pw){
         this.name = name;
         this.email = email;
         this.pw = pw;
     }
 
-    public void updatePW(String pw){
-        this.pw = pw;
-    }
+
 }

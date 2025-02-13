@@ -3,7 +3,8 @@ package com.example.week9_schedule.service;
 import com.example.week9_schedule.dto.ScheduleRequestDto;
 import com.example.week9_schedule.dto.ScheduleResponseDto;
 import com.example.week9_schedule.entity.Schedule;
-import com.example.week9_schedule.entity.User;
+import com.example.week9_schedule.exception.CustomException;
+import com.example.week9_schedule.exception.ExceptionStatus;
 import com.example.week9_schedule.repository.ScheduleRepository;
 import com.example.week9_schedule.repository.UserRepository;
 import lombok.Getter;
@@ -11,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,9 +24,9 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto save(ScheduleRequestDto dto){
-        Schedule schedule = new Schedule(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo());
-        scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
+        Schedule schedule = new Schedule(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo()); // 2
+        scheduleRepository.save(schedule); // 1. 서비스 단이네? 그러면 뭐야?
+        return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime()); // 3.
     }
 
     public List<ScheduleResponseDto> findAll(){
@@ -45,7 +44,7 @@ public class ScheduleService {
     }
 
     public ScheduleResponseDto findOne(Long id){
-        Schedule findSchedule = scheduleRepository.findByIdOrElseThrow(id);
+        Schedule findSchedule = scheduleRepository.findByIdOrElseThrow(id); // 1. id 대조해서 그 id에 맞는 데이터를 조회함.
         return new ScheduleResponseDto(findSchedule.getId(), findSchedule.getNameWrite(), findSchedule.getTodoTitle(), findSchedule.getTodo(), findSchedule.getCreateTime(), findSchedule.getUpdateTime());
         /*Schedule schedule = scheduleRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 id에 맞는 스케줄이 없습니다.")
@@ -56,7 +55,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto update(Long id, ScheduleRequestDto dto){
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("헤당 id에 맞는 스케줄이 없습니다.")
+                () -> new CustomException(ExceptionStatus.)
         );
         schedule.update(dto.getNameWrite(), dto.getTodoTitle(), dto.getTodo());
         return new ScheduleResponseDto(schedule.getId(), schedule.getNameWrite(), schedule.getTodoTitle(), schedule.getTodo(), schedule.getCreateTime(), schedule.getUpdateTime());
